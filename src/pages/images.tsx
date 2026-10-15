@@ -46,7 +46,8 @@ const KIND_LABEL: Record<VisualSubject["kind"], string> = {
 
 export const ImagesPage = () => {
   const navigate = useNavigate();
-  const { state, start, insertOne, reset, setInsertStyle } = useImages();
+  const { state, selectedImages, start, insertOne, reset, setInsertStyle } =
+    useImages();
   const [text, setText] = useState("");
   const [fromSlide, setFromSlide] = useState(false);
   const [detectionDone, setDetectionDone] = useState(false);
@@ -144,6 +145,11 @@ export const ImagesPage = () => {
 
       {(state.phase === "searching" || state.phase === "ready") && (
         <Rows spacing="2u">
+          <Text size="small" tone="tertiary">
+            {selectedImages > 0
+              ? "An image is selected on the slide. Clicking a result replaces it."
+              : "Clicking a result adds it to the slide. Select an image on the slide first to replace it instead."}
+          </Text>
           <SummaryBar
             subjects={state.subjects.length}
             images={totalImages}
@@ -192,7 +198,7 @@ function Hero() {
           color: COLORS.grey600,
         }}
       >
-        PARALLEL  //  IMAGE SEARCH
+        PARALLEL // IMAGE SEARCH
       </span>
       <Title size="medium">Images for this slide</Title>
       <Text size="small" tone="tertiary">
@@ -280,7 +286,9 @@ function SummaryBar({
       }}
     >
       {subjects} SUBJECTS // {images} IMAGES //{" "}
-      <span style={{ color: COLORS.black }}>{official} FROM OFFICIAL SITES</span>
+      <span style={{ color: COLORS.black }}>
+        {official} FROM OFFICIAL SITES
+      </span>
       {searching
         ? "  //  SEARCHING…"
         : seconds != null

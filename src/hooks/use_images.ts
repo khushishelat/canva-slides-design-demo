@@ -6,7 +6,8 @@
  *   ↓ (plan error)
  *   failed
  */
-import { useCallback, useRef, useState } from "react";
+import { selection, type SelectionEvent } from "@canva/design";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { planImages, searchSubjectImages } from "src/api/api";
 import { insertImage, type ImageInsertStyle } from "src/lib/image_inserter";
 import type { ImageCandidate, SubjectImages, VisualSubject } from "src/types";
@@ -33,6 +34,21 @@ export type ImagesState = {
 export function useImages() {
   const [state, setState] = useState<ImagesState>(makeInitial());
   const styleRef = useRef<ImageInsertStyle>({});
+  // Latest image selection in the editor; a click on a result replaces it.
+  const selectionRef = useRef<SelectionEvent<"image"> | undefined>(undefined);
+  const [selectedImages, setSelectedImages] = useState(0);
+
+  useEffect(
+    () =>
+      selection.registerOnChange({
+        scope: "image",
+        onChange: (event) => {
+          selectionRef.current = event;
+          setSelectedImages(event.count);
+        },
+      }),
+    [],
+  );
 
   const reset = useCallback(() => setState(makeInitial()), []);
 
@@ -97,7 +113,12 @@ export function useImages() {
         inserts: { ...s.inserts, [key]: "inserting" },
       }));
       try {
-        await insertImage(candidate, subject.label, styleRef.current);
+        await insertImage(
+          candidate,
+          subject.label,
+          styleRef.current,
+          selectionRef.current,
+        );
         setState((s) => ({
           ...s,
           inserts: { ...s.inserts, [key]: "inserted" },
@@ -118,7 +139,7 @@ export function useImages() {
     styleRef.current = style;
   }, []);
 
-  return { state, start, insertOne, reset, setInsertStyle };
+  return { state, selectedImages, start, insertOne, reset, setInsertStyle };
 }
 
 function makeInitial(): ImagesState {
