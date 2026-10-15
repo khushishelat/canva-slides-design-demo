@@ -4,6 +4,7 @@ import express from "express";
 import { createBaseServer } from "../utils/backend/base_backend/create";
 import { createDeckRouter } from "./routers/deck";
 import { createFactsRouter } from "./routers/facts";
+import { createImagesRouter } from "./routers/images";
 
 async function main() {
   const APP_ID = process.env.CANVA_APP_ID;
@@ -35,14 +36,16 @@ async function main() {
   // Canva JWT verification — ensures calls come from an authenticated Canva session.
   router.use(user.verifyToken({ appId: APP_ID }));
 
-  // Two flows:
+  // Three flows:
   //   /api/deck   — orchestrated full-deck generation (Claude + Parallel)
   //   /api/facts  — single cited stat insert
+  //   /api/images — real images of what's on the slide (Parallel Image Search)
   router.use(createDeckRouter());
   router.use(createFactsRouter());
+  router.use(createImagesRouter());
 
   // eslint-disable-next-line no-console
-  console.log("✓ Registered routers: /api/deck · /api/facts");
+  console.log("✓ Registered routers: /api/deck · /api/facts · /api/images");
 
   const server = createBaseServer(router);
   server.start(process.env.CANVA_BACKEND_PORT);

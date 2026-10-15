@@ -123,3 +123,46 @@ export async function cancelDeck(jobId: string): Promise<void> {
   );
 }
 
+
+// ===== Real images (Parallel Image Search) =====
+
+import type { SubjectImages, VisualSubject } from "src/types";
+
+export type ImagesPlanResponse = {
+  subjects: VisualSubject[];
+  fallback: boolean;
+  session_id: string;
+  elapsed_seconds: number;
+};
+
+export async function planImages(text: string): Promise<ImagesPlanResponse> {
+  return authedJson<ImagesPlanResponse>("/api/images/plan", {
+    method: "POST",
+    body: JSON.stringify({ text }),
+  });
+}
+
+export async function searchSubjectImages(
+  subject: VisualSubject,
+  session_id: string,
+): Promise<SubjectImages> {
+  return authedJson<SubjectImages>("/api/images/search", {
+    method: "POST",
+    body: JSON.stringify({ subject, session_id }),
+  });
+}
+
+export type FetchedImage = {
+  data_url: string;
+  mime_type: "image/jpeg" | "image/png" | "image/webp";
+  width: number;
+  height: number;
+};
+
+/** Backend downloads the image and returns it as a data URL for upload(). */
+export async function fetchImageData(url: string): Promise<FetchedImage> {
+  return authedJson<FetchedImage>("/api/images/fetch", {
+    method: "POST",
+    body: JSON.stringify({ url }),
+  });
+}

@@ -310,3 +310,63 @@ export async function chatComplete(
   }
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
+
+// ===== Image Search API =====
+//
+//   POST /v1/images/search  — keyword queries + optional objective → ranked
+//   web images (direct image URL, source page URL, title, dimensions).
+//
+// `advanced` (default) is ~3s at $5/1k requests; `fast` is ~1s at $1/1k but
+// does not return width/height, which slide layout needs.
+
+export type ImageSearchMode = "fast" | "advanced";
+
+export type ImageSearchBody = {
+  /** 1–5 short keyword queries, each <= 200 chars. */
+  search_queries: string[];
+  /** What should be in the picture — angle, setting, constraints. */
+  objective?: string;
+  mode?: ImageSearchMode;
+  /** The model that wrote the request and consumes the results. */
+  client_model?: string;
+  /** Groups related calls made as part of one larger task. */
+  session_id?: string;
+  advanced_settings?: {
+    /** ISO 3166-1 alpha-2 country code. */
+    location?: string;
+    /** 1–20, default 10. */
+    max_results?: number;
+  };
+};
+
+export type ImageSearchResult = {
+  title: string | null;
+  image_url: string;
+  source_page_url: string | null;
+  width: number | null;
+  height: number | null;
+};
+
+export type ImageSearchResponse = {
+  search_id: string;
+  session_id: string;
+  results: ImageSearchResult[];
+};
+
+export async function imageSearch(
+  body: ImageSearchBody,
+): Promise<ImageSearchResponse> {
+  const res = await fetch(`${PARALLEL_API_BASE}/v1/images/search`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey(),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Parallel image search failed: ${res.status} ${text}`);
+  }
+  return res.json();
+}
