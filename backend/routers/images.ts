@@ -55,20 +55,19 @@ export function createImagesRouter() {
   });
 
   router.post("/api/images/search", async (req, res) => {
-    const { subject, session_id } = req.body as {
-      subject?: VisualSubject;
-      session_id?: string;
-    };
-    if (
-      !subject ||
-      !Array.isArray(subject.search_queries) ||
-      subject.search_queries.length === 0
-    ) {
+    const { session_id } = req.body as { session_id?: unknown };
+    const subject = sanitizeSubject(
+      (req.body as { subject?: unknown }).subject,
+    );
+    if (!subject) {
       return res.status(400).json({ error: "subject is required" });
     }
     try {
       const t0 = Date.now();
-      const result = await findImagesForSubject(subject, session_id);
+      const result = await findImagesForSubject(
+        subject,
+        typeof session_id === "string" ? session_id.slice(0, 200) : undefined,
+      );
       const elapsed = (Date.now() - t0) / 1000;
       // eslint-disable-next-line no-console
       console.log(
@@ -101,4 +100,44 @@ export function createImagesRouter() {
   });
 
   return router;
+}
+
+/**
+ * The subject comes back from the client, so re-validate it before it
+ * becomes an Image Search request: known kind, bounded counts and lengths.
+ */
+function sanitizeSubject(raw: unknown): VisualSubject | null {
+  if (!raw || typeof raw !== "object") return null;
+  const s = raw as Record<string, unknown>;
+  const str = (v: unknown, max: number) =>
+    typeof v === "string" ? v.trim().slice(0, max) : "";
+  const strList = (v: unknown, n: number, max: number) =>
+    Array.isArray(v)
+      ? v
+          .map((x) => str(x, max))
+          .filter(Boolean)
+          .slice(0, n)
+      : [];
+  const kinds = [
+    "facility",
+    "person",
+    "product",
+    "logo",
+    "chart",
+    "place",
+    "event",
+    "other",
+  ] as const;
+  const kind = kinds.find((k) => k === s.kind) ?? "other";
+  const search_queries = strList(s.search_queries, 3, 200);
+  if (search_queries.length === 0) return null;
+  return {
+    id: str(s.id, 100),
+    label: str(s.label, 200),
+    kind,
+    objective: str(s.objective, 2000),
+    search_queries,
+    official_domains: strList(s.official_domains, 5, 100),
+    why: str(s.why, 300),
+  };
 }

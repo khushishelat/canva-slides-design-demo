@@ -310,7 +310,7 @@ function creditRange(
       ...(style.fontRef ? { fontRef: style.fontRef } : {}),
     },
   );
-  if (sourcePageUrl) {
+  if (sourcePageUrl && /^https?:\/\//i.test(sourcePageUrl)) {
     range.formatText(
       { index: label.length, length: host.length },
       { link: sourcePageUrl, decoration: "underline" },
