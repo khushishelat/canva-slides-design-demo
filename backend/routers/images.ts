@@ -1,9 +1,9 @@
 /**
- * /api/images — "put the real thing on the slide".
+ * /api/images — web images of what a slide names (Parallel Image Search).
  *
  * Two calls so the sidebar can show progress as it happens:
  *   POST /api/images/plan    { text }               → { subjects, session_id }
- *       Claude reads the slide text and names the real things worth showing.
+ *       Parallel Chat API reads the slide text and lists the named subjects.
  *   POST /api/images/search  { subject, session_id } → SubjectImages
  *       Parallel Image Search for one subject, filtered to images Canva can
  *       upload and ranked first-party first. The sidebar fires one per

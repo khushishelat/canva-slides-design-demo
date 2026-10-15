@@ -44,10 +44,15 @@ export async function insertImage(
     mimeType: fetched.mime_type,
     url: fetched.data_url,
     thumbnailUrl,
-    name: `${subjectLabel} · ${host}`.slice(0, 255),
+    // No `name`: the SDK types accept it, but the editor currently fails
+    // the upload with internal_error when it's set.
     // Retrieved from the web as-is — not generated or altered.
     aiDisclosure: "none",
   });
+  // upload() resolves once queued; processing failures only surface here.
+  // Wait so a rejected image shows as an error on its tile instead of a
+  // broken placeholder on the slide.
+  await asset.whenUploaded();
 
   const altText = {
     text: candidate.title || subjectLabel,

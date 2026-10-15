@@ -1,5 +1,5 @@
 /**
- * Real images page — "put the real thing on your slide".
+ * Image search page.
  *
  * Reads the current slide's text, picks out the real, named things on it
  * (facilities, people, products, logos, charts), runs one Parallel Image
@@ -104,11 +104,11 @@ export const ImagesPage = () => {
         <Rows spacing="1u">
           {detectionDone && fromSlide && (
             <Text size="small" tone="tertiary">
-              Read from your slide — edit if needed.
+              Text from the current slide.
             </Text>
           )}
           <FormField
-            label="What's on this slide?"
+            label="Slide text"
             control={(props) => (
               <MultilineInput
                 {...props}
@@ -126,7 +126,7 @@ export const ImagesPage = () => {
             disabled={text.trim().length < 4}
             stretch
           >
-            Find real images
+            Find images
           </Button>
         </Rows>
       )}
@@ -134,9 +134,9 @@ export const ImagesPage = () => {
       {state.phase === "planning" && (
         <Rows spacing="1u">
           <StatusPanel
-            kicker="PARALLEL  //  READING YOUR SLIDE"
+            kicker="PARALLEL  //  READING SLIDE"
             body={state.text}
-            foot="Finding the named things worth showing…"
+            foot="Picking subjects…"
           />
           <LoadingIndicator size="medium" />
         </Rows>
@@ -192,22 +192,13 @@ function Hero() {
           color: COLORS.grey600,
         }}
       >
-        PARALLEL // REAL IMAGES
+        PARALLEL  //  IMAGE SEARCH
       </span>
-      <Title size="medium">Put the real thing on your slide</Title>
+      <Title size="medium">Images for this slide</Title>
       <Text size="small" tone="tertiary">
-        Stock shows a data center. This finds the one your slide names — the
-        actual facility, person, or product — from across the web, official
-        sources first, each with its source credited.
+        Searches the web for images of what this slide names. Click one to add
+        it.
       </Text>
-      <div
-        style={{
-          height: 2,
-          width: 32,
-          backgroundColor: COLORS.brand,
-          marginTop: 4,
-        }}
-      />
     </Rows>
   );
 }
@@ -289,7 +280,7 @@ function SummaryBar({
       }}
     >
       {subjects} SUBJECTS // {images} IMAGES //{" "}
-      <span style={{ color: COLORS.black }}>{official} OFFICIAL</span>
+      <span style={{ color: COLORS.black }}>{official} FROM OFFICIAL SITES</span>
       {searching
         ? "  //  SEARCHING…"
         : seconds != null
@@ -361,7 +352,7 @@ function SubjectSection({
           }}
         >
           <LoadingIndicator size="small" />
-          Searching the web for images…
+          Searching…
         </div>
       )}
 

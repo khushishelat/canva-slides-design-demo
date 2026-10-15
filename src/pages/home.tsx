@@ -175,14 +175,13 @@ export const HomePage = () => {
         </Button>
       </div>
 
-      {/* Secondary CTA — real images of what the slide names */}
+      {/* Secondary CTA — images of what the slide names */}
       <div
         onClick={() => navigate(Paths.IMAGES)}
         style={{
           cursor: "pointer",
           backgroundColor: "#FFFFFF",
           border: `1px solid ${PARALLEL_GREY_300}`,
-          borderLeft: `2px solid ${PARALLEL_BRAND}`,
           borderRadius: 4,
           padding: 16,
         }}
@@ -196,7 +195,7 @@ export const HomePage = () => {
             marginBottom: 8,
           }}
         >
-          PARALLEL  //  REAL IMAGES
+          PARALLEL  //  IMAGE SEARCH
         </div>
         <div
           style={{
@@ -207,7 +206,7 @@ export const HomePage = () => {
             marginBottom: 4,
           }}
         >
-          Put the real thing on your slide.
+          Find images for this slide
         </div>
         <div
           style={{
@@ -216,9 +215,8 @@ export const HomePage = () => {
             lineHeight: 1.45,
           }}
         >
-          Reads your slide and finds images of the actual facilities, people,
-          and products it names — official sources first, credited. ~10
-          seconds.
+          Searches the web for images of the companies, people, and products
+          the slide names.
         </div>
       </div>
 
