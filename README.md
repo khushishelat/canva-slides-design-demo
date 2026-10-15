@@ -6,7 +6,7 @@ This is a reference implementation showing how to combine [Anthropic's Claude](h
 
 ## What it does
 
-Two flows, both rendered into the user's Canva design via the Apps SDK:
+Three flows, all rendered into the user's Canva design via the Apps SDK:
 
 ### 1. Research deck
 
@@ -23,6 +23,18 @@ Both modes use the same render pipeline (`addPage` with strict element clamping)
 ### 2. Fact cards
 
 A single-shot flow: user types (or has auto-detected from their current slide) a topic, the app hits Parallel Chat API `core`, and returns 3-5 cited stat callouts. The user clicks any card to drop a richtext element onto their current slide. The app reads the design's accent color and font from existing richtext to style the inserted card to match.
+
+### 3. Image search
+
+Reads the current slide's text and finds web images of the specific things it names — a facility, a person, a product, a report's chart.
+
+1. Parallel Chat API (`speed`) splits the slide into 1–4 subjects and writes an Image Search request for each (keyword queries, an objective, and the subject's own domains).
+2. Parallel Image Search (`advanced`) runs once per subject, in parallel. Results from stock agencies are dropped, every URL is checked to load as JPEG/PNG/WebP at slide size, and images published on the subject's own domains are ranked first and badged.
+3. Clicking a result inserts it with a linked `Source: <domain>` credit. If an image is selected on the slide (e.g. a template's placeholder photo), the result replaces it in place and the credit goes next to its frame.
+
+Images are fetched by the backend and handed to Canva as data URLs, because many image CDNs negotiate JPEG vs WebP per request and Canva requires the declared MIME type to match what it downloads.
+
+Web images carry their publishers' rights. The source credit is not a license.
 
 ## Architecture
 
