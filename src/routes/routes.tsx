@@ -3,6 +3,7 @@ import { DeckPage } from "src/pages/deck";
 import { ErrorPage } from "src/pages/error";
 import { FactsPage } from "src/pages/facts";
 import { HomePage } from "src/pages/home";
+import { ImagesPage } from "src/pages/images";
 import { Paths } from "src/routes/paths";
 
 export const routes = [
@@ -14,6 +15,7 @@ export const routes = [
       { index: true, element: <HomePage /> },
       { path: Paths.DECK, element: <DeckPage /> },
       { path: Paths.FACTS, element: <FactsPage /> },
+      { path: Paths.IMAGES, element: <ImagesPage /> },
     ],
   },
 ];

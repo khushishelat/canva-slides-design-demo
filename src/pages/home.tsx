@@ -175,6 +175,51 @@ export const HomePage = () => {
         </Button>
       </div>
 
+      {/* Secondary CTA — images of what the slide names */}
+      <div
+        onClick={() => navigate(Paths.IMAGES)}
+        style={{
+          cursor: "pointer",
+          backgroundColor: "#FFFFFF",
+          border: `1px solid ${PARALLEL_GREY_300}`,
+          borderRadius: 4,
+          padding: 16,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: FONT_MONO,
+            fontSize: 11,
+            letterSpacing: "0.04em",
+            color: PARALLEL_GREY_600,
+            marginBottom: 8,
+          }}
+        >
+          PARALLEL  //  IMAGE SEARCH
+        </div>
+        <div
+          style={{
+            fontSize: 16,
+            lineHeight: 1.3,
+            color: PARALLEL_BLACK,
+            fontWeight: 500,
+            marginBottom: 4,
+          }}
+        >
+          Find images for this slide
+        </div>
+        <div
+          style={{
+            fontSize: 12,
+            color: PARALLEL_GREY_600,
+            lineHeight: 1.45,
+          }}
+        >
+          Searches the web for images of the companies, people, and products
+          the slide names.
+        </div>
+      </div>
+
       {/* Secondary CTA — single fact insert */}
       <div
         onClick={() => navigate(Paths.FACTS)}
